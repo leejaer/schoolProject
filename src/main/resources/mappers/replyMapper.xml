@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.jafa.repository.ReplyRepository">
+	<insert id="write">
+		insert into reply_board(rno,sno,reply,writer,parent_id)
+		values(seq_reply.nextval,#{sno},#{reply},#{writer},#{parent_id})
+	</insert>
+	
+	<select id="reply" resultType="Reply_boardVO">
+		SELECT 
+		    LEVEL,
+		    rno,
+		    parent_id,
+		    writer,
+		    reply,
+		    replyDate
+		from reply_board 
+		where sno = #{sno}
+		START WITH parent_id=0
+		CONNECT BY PRIOR rno=parent_id
+		ORDER SIBLINGS BY rno desc
+	</select>
+
+	<update id="updateAnswer">
+    	update reply_board 
+    	set
+    		answer = (select count(parent_id) from reply_board where parent_id=#{parent_id})
+    	where rno = #{parent_id} 
+	</update>
+	<update id="delanswer">
+    	update reply_board 
+    	set
+    		reply = #{reply},
+    		writer = #{writer}
+    	where rno = #{rno}
+    </update>
+    <delete id="del">
+    	DELETE FROM reply_board
+		WHERE rno = #{rno}
+    </delete>
+</mapper>

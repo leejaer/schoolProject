@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.jafa.repository.ApprovalRepository">
+	
+	<insert id="addExpend" useGeneratedKeys="true" keyColumn="eno" keyProperty="eno">
+		insert into expend(eno,kind,state)
+		values(expend_seq.nextval,#{kind},#{state})
+	</insert>
+
+	<insert id="ExpnedApproval">
+		insert into expendApproval(eno,name,expend, count)
+		 values(#{eno},#{name},#{expend},#{count})
+	</insert>
+
+	
+	<insert id="write">
+		insert into approval_school(ano,no,title,kind,state,content,progress)
+		 values(approval_seq.nextval,#{no},#{title},#{kind},#{state},#{content},#{progress})
+	</insert>
+	
+	
+	<insert id="setContstruction">
+		insert into expend(eno,kind,name,state,expend)
+		 values(expend_seq.nextval,#{kind},#{name},#{state},#{expend})
+	</insert>
+	
+	
+	<insert id="addEvent">
+		insert into approval_school(ano,kind,title,state,content,progress) values(approval_seq.nextval,#{kind},#{title},#{state},#{content},#{progress})
+	</insert>
+	
+	<select id="getList" resultType="approvalVO">
+		select  * from 	approval_school where kind ='join' and state ='교감승인'
+	</select>
+	
+	<select id="getApproval" resultType="ExpendVO">
+		select * from expend
+	</select>
+
+	<select id="getExpendList" resultType="expendVO">
+		select  * from 	expend where kind = #{pageName}
+	</select>
+	
+	<select id="getExpendApproval" resultType="expendVO">
+		select  * from 	expendApproval where eno =#{eno}
+	</select>
+	
+	<select id="eventList" resultType="approvalVO">
+		select  * from 	approval_school where kind ='event_in'
+	</select>
+
+	<select id="eventListP" resultType="approvalVO">
+		select  * from 	approval_school where kind ='event_in' and state ='교감승인' or state ='교장승인'
+	</select>
+	
+	<delete id="del" >
+		delete from approval_school where ano = #{ano}
+	</delete>
+	
+	
+	<delete id="ExpendDelete" >
+		delete from expend where eno = #{eno}
+	</delete>
+	
+	<update id="denyUpdate">
+    	update approval_school 
+    	set
+    		state = #{state}
+    	where ano = #{ano} 
+	</update>
+
+	<update id="updateApproval">
+    	update expend 
+    	set
+    		state = #{state}
+    	where eno = #{eno} 
+	</update>
+	
+	<update id="eventUpdate">
+    	update approval_school 
+    	set
+    		state = #{state},
+    		progress = #{progress}
+    	where ano = #{ano} 
+	</update>
+	
+	<select id="TotalCount" resultType="int">
+		select count(*) from approval_school
+		<where>
+			kind = #{kind}
+		</where>
+	</select>
+
+</mapper>
