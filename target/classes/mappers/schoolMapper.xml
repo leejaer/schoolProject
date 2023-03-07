@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.jafa.repository.SchoolRepository">
+   	<sql id="condition">
+		<trim prefix="and">
+			<choose>
+				<when test="criteria.type=='T'.toString()">
+					title like '%'||#{criteria.keyword}||'%'
+				</when>
+				<when test="criteria.type=='C'.toString()">
+					content like '%'||#{criteria.keyword}||'%'
+				</when>
+				<when test="criteria.type=='W'.toString()">
+					writer like '%'||#{criteria.keyword}||'%'
+				</when>			
+			</choose>
+		</trim>
+		<if test="criteria.category!=null and criteria.category!=''">
+			and cate_id = #{criteria.category}
+		</if>		
+	</sql>
+	
+  <select id="list" resultType="Category">
+    select * from cate where kind=#{kind} 
+  </select>
+  
+  <select id="getdetail" resultType="SchoolVO">
+  	  select * from school where sno = #{sno}
+  </select>
+  
+  <select id="getBoard" resultType="SchoolVO">
+  		<![CDATA[
+		select 
+		    rn, sno, kind, cate_id, title, content, writer,clickcnt, writeDate
+		from
+		(
+		    select 
+		        rownum as rn, sno, kind, cate_id, title, content, writer,clickcnt, writeDate 
+		    from 
+		        school
+		    where rownum <= #{criteria.maxRow} and kind=#{kind} and cate_id=#{pageName}
+		]]>
+			<include refid="condition"/>
+		<![CDATA[ 
+		) 
+		where rn > #{criteria.minRow} and kind=#{kind} and cate_id=#{pageName} 
+		]]>
+		order by sno asc
+  </select>
+  <!-- 쿼리문 알아보기 -->
+  	<insert id="write" useGeneratedKeys="true" keyColumn="sno" keyProperty="sno">
+		insert into school(sno,kind,cate_id,title,content,writer)
+		values(sno_seq.nextval,#{kind},#{cate_id},#{title},#{content},#{writer})
+	</insert>
+	
+	<update id="updateAttachFileCnt">
+    	update school 
+    	set
+    		attachFileCnt = (select count(sNo) from attach_file where sNo=#{sno})
+    	where sNo = #{sno} 
+	</update>
+
+
+	<update id="setClickcnt">
+    	update school 
+    	set
+    		clickcnt = #{clickcnt}
+    	where sno = #{no} 
+	</update>
+	<update id="setReplycnt">
+    	update school 
+    	set
+    		clickcnt = (select count(sno) from reply_board where sno=#{sno})
+    	where sno = #{sno} 
+	</update>
+	
+	<update id="updateCafe">
+    	update school 
+    	set
+    		content=#{content},
+    		writer=#{writer}
+    	where sNo = #{sno} 
+	</update>
+	
+	<delete id="remove">
+		delete from school where sno=#{sno}
+	</delete>
+	
+	<select id="getCafeDetail" resultType="SchoolVO">
+	    select * from school where title=#{title} and cate_id=#{cate_id}
+	 </select>
+	
+	<select id="getTotalCount" resultType="int">
+		select count(*) from school
+		<where>
+			<include refid="condition"/>
+			and kind=#{kind} and cate_id=#{pageName}
+		</where>
+	</select>
+  
+</mapper>

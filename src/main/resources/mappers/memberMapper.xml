@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jafa.repository.MemberRepository">
+	<insert id="save">
+		insert into member(mno, id, pwd, pname, tel, email)
+		values(member_sq.nextval,#{id},#{pwd},#{pname},#{tel},#{email})
+	</insert>
+	
+	<resultMap type="com.jafa.domain.MemberVO" id="memberMap">
+		<result property="mno" column="mno"/>
+		<result property="id" column="id"/>
+		<result property="pwd" column="pwd"/>
+		<result property="email" column="email"/>
+		<result property="pname" column="pname"/>
+		<result property="tel" column="tel"/>
+		<result property="enabled" column="enabled"/>
+		<collection property="authList" 
+			column="id" 
+			javaType="java.util.ArrayList" 
+			ofType="com.jafa.domain.AuthVO"
+			select="getAuthList"/>
+	</resultMap>
+
+	<select id="read" resultMap="memberMap">
+		SELECT * FROM member WHERE id = #{id}
+	</select>
+	
+
+	<select id="id" resultMap="memberMap">
+		SELECT * FROM member
+	</select>
+	
+	<select id="getAuthList" resultType="com.jafa.domain.AuthVO">
+		select * from member_auth where id = #{id} order by ordinal
+	</select>
+
+	<select id="loginCheck" resultType="Boolean">
+		select enabled from member where id = #{id}
+	</select>
+	
+	<select id="getList" resultType="memberVO">
+		select * from member where id = #{id}
+	</select>
+	
+	<update id="login">
+		UPDATE member set enabled=#{login}  WHERE id = #{id}
+	</update>
+
+	<update id="updateDetail">
+		UPDATE member set
+		 pwd = #{pwd},
+		 email = #{email} 
+		 WHERE id = #{id}
+	</update>
+	
+	
+</mapper>
