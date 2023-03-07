@@ -90,7 +90,6 @@ public class ApprovalService {
 				total = 0L;
 				name = "";
 				for(ExpendVO VOList : expend) {
-					System.out.println(VOList);
 					total += VOList.getExpend()*VOList.getCount();
 					name += VOList.getName()+" ";
 				}

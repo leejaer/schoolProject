@@ -60,7 +60,6 @@ public class ApprovalController {
 	
 	@PostMapping("/expendDel")
 	public String expendDel(String kind,String pageName ,RedirectAttributes rttr,Long eno) {
-		System.out.println(eno);
 		approvlaSercive.delExpend(eno);
 		return "redirect:/board/"+kind+"/"+kind+"/"+pageName;
 	}

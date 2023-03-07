@@ -157,7 +157,6 @@ public class BoardService {
 
 	public List<Reply_boardVO> findReply(Long sno) {
 		List<Reply_boardVO> replyList = replyRepository.reply(sno);
-		System.out.println(replyList);
 
 		return replyList;
 		

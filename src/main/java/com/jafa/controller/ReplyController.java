@@ -61,7 +61,6 @@ public class ReplyController {
 		boardService.setClickcnt(sno);
 		
 		list = replyService.list(sno);
-		System.out.println(list);
 		return list;
 	}
 }

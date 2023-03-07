@@ -95,7 +95,6 @@ public class MemberController {
 	@GetMapping("/info")
 	public void info(Authentication auth, Model model) {
 		MemberDetail principal = (MemberDetail) auth.getPrincipal();
-		System.out.println(principal.getMemberVO());
 		model.addAttribute("info",principal.getMemberVO());
 	}
 	
